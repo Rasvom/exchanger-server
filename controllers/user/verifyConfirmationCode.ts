@@ -9,7 +9,7 @@ export const verifyConfirmationCode = async (req: Request, res: Response) => {
 
     if (storedCode && storedCode.code === code) {
       await ConfirmationCode.deleteOne({ email });
-      res.status(200);
+      res.status(200).json({});
     } else {
       res.status(400).json({ error: 'Неверный код' });
     }

@@ -12,10 +12,9 @@ export const registration = async (req: Request, res: Response) => {
 
     const { email, password, fullName } = req.body;
     const hashPassword = await hash(password, Number(process.env.BCRYPT_ROUNDS));
-    const user = await User.create({ fullName, email, password: hashPassword });
+    await User.create({ fullName, email, password: hashPassword });
 
-    const { password: _, ...userData } = user.toObject();
-    res.status(201).json(userData);
+    res.status(201).json({});
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: `Registration error: ${error.message}` });

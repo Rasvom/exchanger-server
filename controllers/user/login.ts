@@ -9,13 +9,13 @@ export const login = async (req: Request, res: Response) => {
     const candidate = await User.findOne({ email });
 
     if (!candidate) {
-      return res.status(400).json({ error: 'Invalid login or password' });
+      return res.status(400).json({ error: 'Неправильный логин или пароль' });
     }
 
     const valid = await compare(password, candidate.password);
 
     if (!valid) {
-      return res.status(400).json({ error: 'Invalid login or password' });
+      return res.status(400).json({ error: 'Неправильный логин или пароль' });
     }
 
     const payload = { id: candidate._id, email: candidate.email };
@@ -30,7 +30,7 @@ export const login = async (req: Request, res: Response) => {
       sameSite: 'strict',
     });
 
-    res.status(200);
+    res.status(200).json({});
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: `Login error: ${error.message}` });

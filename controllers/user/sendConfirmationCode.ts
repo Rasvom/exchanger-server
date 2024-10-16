@@ -18,7 +18,7 @@ export const sendConfirmationCode = async (req: Request, res: Response) => {
 
   try {
     await sendConfirmationEmail(email, code);
-    res.status(200);
+    res.status(200).json({});
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: `Failed to send confirmation email: ${error.message}` });

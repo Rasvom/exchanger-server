@@ -13,7 +13,7 @@ export const changePassword = async (req: Request, res: Response) => {
 
     const hashPassword = await hash(password, Number(process.env.BCRYPT_ROUNDS));
     await User.findOneAndUpdate({ email: userEmail }, { password: hashPassword }, { new: true });
-    res.status(200);
+    res.status(200).json({});
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: `Change password error: ${error.message}` });
