@@ -23,14 +23,7 @@ export const login = async (req: Request, res: Response) => {
       expiresIn: '30m',
     });
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 30 * 60 * 1000,
-      sameSite: 'strict',
-    });
-
-    res.status(200).json({});
+    res.status(200).json({ accessToken });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: `Login error: ${error.message}` });

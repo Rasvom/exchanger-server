@@ -24,7 +24,13 @@ if (!process.env.MONGODB || !process.env.PORT || !process.env.SECRET_ACCSESS_JWT
 }
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173', // Домен вашего клиента
+    credentials: true, // Разрешить передачу куки
+  }),
+);
+
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
