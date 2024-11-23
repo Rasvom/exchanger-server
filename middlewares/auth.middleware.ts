@@ -9,24 +9,42 @@ declare module 'express-serve-static-core' {
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.cookies.accessToken;
+    const accessToken = req.headers.authorization?.split(' ')[1];
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!token) {
-      return res.status(401).json({ error: 'Токен не найден' });
+    if (!accessToken) {
+      return res.status(401).json({});
     }
 
     try {
-      const decoded = verify(token, process.env.SECRET_ACCSESS_JWT!) as JwtPayload;
+      const decoded = verify(accessToken, process.env.SECRET_ACCESS_JWT!) as JwtPayload;
       req.user = decoded;
-      next();
-    } catch (error) {
-      return res.status(401).json({ error: 'Неверный или истекший токен' });
+      return next();
+    } catch (accessError) {
+      if (!refreshToken) {
+        return res.status(401).json({});
+      }
+
+      try {
+        const decodedRefresh = verify(refreshToken, process.env.SECRET_REFRESH_JWT!) as JwtPayload;
+        req.user = decodedRefresh;
+
+        res.setHeader('X-Refresh-Tokens', 'true');
+        return next();
+      } catch (refreshError) {
+        console.error('Ошибка проверки refreshToken:', refreshError);
+
+        res.clearCookie('refreshToken', {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+        });
+
+        return res.status(401).json({});
+      }
     }
   } catch (error) {
-    if (error instanceof Error) {
-      return res.status(500).json({ error: `Validation error: ${error.message}` });
-    } else {
-      return res.status(500).json({ error: 'An unknown error occurred' });
-    }
+    console.error('Ошибка проверки токенов:', error);
+    return res.status(500).json({});
   }
 };

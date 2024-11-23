@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../../models/User.model';
+import User from '@models/User.model';
 import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 
@@ -19,8 +19,19 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const payload = { id: candidate._id, email: candidate.email };
-    const accessToken = await sign(payload, process.env.SECRET_ACCSESS_JWT!, {
-      expiresIn: '30m',
+    const accessToken = sign(payload, process.env.SECRET_ACCESS_JWT!, {
+      expiresIn: '1m',
+    });
+
+    const refreshToken = sign(payload, process.env.SECRET_REFRESH_JWT!, {
+      expiresIn: '7d',
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ accessToken });

@@ -3,6 +3,7 @@ import {
   changePassword,
   getProfile,
   login,
+  refreshTokens,
   registration,
   sendConfirmationCode,
   verifyConfirmationCode,
@@ -32,5 +33,6 @@ router.post(
 router.post('/login', emailValidation, handleValidationError, login);
 router.get('/profile', authMiddleware, getProfile);
 router.post('/change-password', authMiddleware, changePassword);
+router.get('/refresh-tokens', refreshTokens);
 
 export default router;
