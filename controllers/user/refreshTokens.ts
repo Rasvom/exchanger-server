@@ -17,7 +17,7 @@ export const refreshTokens = async (req: Request, res: Response) => {
       { id: decoded.id, email: decoded.email },
       process.env.SECRET_ACCESS_JWT!,
       {
-        expiresIn: '1m',
+        expiresIn: '1d',
       },
     );
 

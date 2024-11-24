@@ -20,7 +20,7 @@ export const login = async (req: Request, res: Response) => {
 
     const payload = { id: candidate._id, email: candidate.email };
     const accessToken = sign(payload, process.env.SECRET_ACCESS_JWT!, {
-      expiresIn: '1m',
+      expiresIn: '1d',
     });
 
     const refreshToken = sign(payload, process.env.SECRET_REFRESH_JWT!, {
