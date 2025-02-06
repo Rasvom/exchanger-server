@@ -7,6 +7,8 @@ import { configureMiddleware } from './middlewares';
 import { configureRoutes } from './routes';
 import { connectToDatabase } from './config/database';
 import { initWebSocket } from './config/websocket';
+import { fetchCryptoPrices } from '@services/cryptoService';
+import { REFRESH_INTERVAL } from '@config/crypto';
 
 if (!process.env.PORT || !process.env.SECRET_ACCESS_JWT) {
   console.error('Отсутствуют необходимые переменные окружения');
@@ -23,6 +25,8 @@ configureMiddleware(app);
 configureRoutes(app);
 
 connectToDatabase(io);
+
+setInterval(fetchCryptoPrices, REFRESH_INTERVAL);
 
 const PORT = process.env.PORT;
 httpServer.listen(PORT, () => {

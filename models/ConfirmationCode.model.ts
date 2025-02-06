@@ -7,5 +7,4 @@ const confirmationCodeSchema = new mongoose.Schema({
 });
 
 const ConfirmationCode = mongoose.model('ConfirmationCode', confirmationCodeSchema);
-
 export default ConfirmationCode;
