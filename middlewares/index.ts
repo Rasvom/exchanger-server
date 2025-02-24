@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 export const configureMiddleware = (app: Express): void => {
   app.use(
     cors({
-      origin: 'http://localhost:5173',
+      origin: ['http://192.168.31.92:5173', 'http://localhost:5173'],
       credentials: true,
       exposedHeaders: ['X-Refresh-Tokens'],
     }),
