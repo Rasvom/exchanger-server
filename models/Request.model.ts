@@ -8,7 +8,7 @@ const requestSchema = new mongoose.Schema(
       required: false,
     },
     sendMethod: {
-      type: String, // Метод отправки средств (например, карта, СБП)
+      type: Object, // Метод отправки средств (например, карта, СБП)
       required: true,
     },
     sendAccountNumber: {
@@ -21,7 +21,7 @@ const requestSchema = new mongoose.Schema(
       min: 0,
     },
     receiveMethod: {
-      type: String, // Метод получения средств (например, карта, СБП)
+      type: Object, // Метод получения средств (например, карта, СБП)
       required: true,
     },
     receiveAccountNumber: {
@@ -46,11 +46,6 @@ const requestSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, // ID менеджера, обрабатывающего заявку
       ref: 'User',
       required: false,
-    },
-    fullName: {
-      type: String, // Полное имя отправителя
-      required: true,
-      minlength: 3,
     },
     cancelReason: {
       type: String, // Причина отмены заявки (если применимо)

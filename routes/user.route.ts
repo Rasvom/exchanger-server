@@ -7,6 +7,8 @@ import {
   registration,
   sendConfirmationCode,
   verifyConfirmationCode,
+  updateProfile,
+  changeEmail,
 } from '@controllers/user';
 import authMiddleware from '@middlewares/auth.middleware';
 import handleValidationError from '@middlewares/handleValidationError';
@@ -33,6 +35,8 @@ router.post(
 router.post('/login', emailValidation, handleValidationError, login);
 router.get('/profile', authMiddleware, getProfile);
 router.post('/change-password', authMiddleware, changePassword);
+router.put('/profile', authMiddleware, updateProfile);
+router.post('/change-email', authMiddleware, changeEmail);
 router.get('/refresh-tokens', refreshTokens);
 
 export default router;

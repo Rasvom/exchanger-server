@@ -5,6 +5,8 @@ import { refreshTokens } from './refreshTokens';
 import { registration } from './registration';
 import { sendConfirmationCode } from './sendConfirmationCode';
 import { verifyConfirmationCode } from './verifyConfirmationCode';
+import { updateProfile } from './updateProfile';
+import { changeEmail } from './changeEmail';
 
 export {
   changePassword,
@@ -14,4 +16,6 @@ export {
   sendConfirmationCode,
   verifyConfirmationCode,
   refreshTokens,
+  updateProfile,
+  changeEmail,
 };

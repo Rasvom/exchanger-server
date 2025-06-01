@@ -3,6 +3,7 @@ import File from '@models/File.model';
 import { yandexClient } from '@config/yandexClient';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuid } from 'uuid';
+import RequestModel from '@models/Request.model';
 
 export const uploadFile = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -43,7 +44,13 @@ export const uploadFile = async (req: Request, res: Response): Promise<void> => 
       mimeType: mimetype,
       size,
       createdAt: new Date(),
+      isVerified: false,
     });
+
+    await RequestModel.findOneAndUpdate(
+      { receiveAccountNumber: cardNumber },
+      { status: 'VERIFICATION_IN_PROGRESS' },
+    );
 
     res.status(201).json({ message: 'Файл успешно загружен', data: savedFile });
   } catch (error) {

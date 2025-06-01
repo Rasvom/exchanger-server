@@ -8,6 +8,7 @@ const fileSchema = new mongoose.Schema(
     cardNumber: { type: String, required: true },
     mimeType: { type: String, required: true },
     size: { type: Number, required: true },
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: { createdAt: true, updatedAt: false } },
 );
