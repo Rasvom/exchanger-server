@@ -1,32 +1,37 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import RequestModel from '@models/Request.model';
+import {
+  AuthenticatedRequest,
+  RequestFilters,
+  SortOptions,
+  RequestStats,
+} from '../../types';
 
-export const getUserRequestsWithPagination = async (req: Request, res: Response) => {
+export const getUserRequestsWithPagination = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
   try {
     if (!req.user?.id) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Параметры пагинации
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    // Параметры сортировки
     const sortBy = (req.query.sortBy as string) || 'createdAt';
     const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
-    const sortOptions: any = {};
-    sortOptions[sortBy] = sortOrder;
+    const sortOptions: SortOptions = {
+      [sortBy]: sortOrder,
+    };
 
-    // Построение фильтров
-    const filters: any = { user: req.user.id };
+    const filters: RequestFilters = { user: req.user.id };
 
-    // Фильтр по статусу
     if (req.query.status && req.query.status !== 'all') {
-      filters.status = req.query.status;
+      filters.status = req.query.status as string;
     }
 
-    // Фильтр по диапазону дат
     if (req.query.dateFrom || req.query.dateTo) {
       filters.createdAt = {};
       if (req.query.dateFrom) {
@@ -34,15 +39,14 @@ export const getUserRequestsWithPagination = async (req: Request, res: Response)
       }
       if (req.query.dateTo) {
         const dateTo = new Date(req.query.dateTo as string);
-        dateTo.setHours(23, 59, 59, 999); // Конец дня
+        dateTo.setHours(23, 59, 59, 999);
         filters.createdAt.$lte = dateTo;
       }
     }
 
-    // Фильтр по сумме (диапазон)
     if (req.query.amountFrom || req.query.amountTo) {
       filters.$or = [];
-      const amountFilter: any = {};
+      const amountFilter: { $gte?: number; $lte?: number } = {};
 
       if (req.query.amountFrom) {
         amountFilter.$gte = parseFloat(req.query.amountFrom as string);
@@ -55,7 +59,6 @@ export const getUserRequestsWithPagination = async (req: Request, res: Response)
       filters.$or.push({ receiveAmount: amountFilter });
     }
 
-    // Поиск по email или номеру счета
     if (req.query.search) {
       const searchRegex = new RegExp(req.query.search as string, 'i');
       filters.$or = filters.$or || [];
@@ -67,7 +70,6 @@ export const getUserRequestsWithPagination = async (req: Request, res: Response)
       );
     }
 
-    // Получение данных
     const [requests, totalCount] = await Promise.all([
       RequestModel.find(filters)
         .sort(sortOptions)
@@ -78,7 +80,6 @@ export const getUserRequestsWithPagination = async (req: Request, res: Response)
       RequestModel.countDocuments(filters),
     ]);
 
-    // Статистика для дашборда
     const stats = await RequestModel.aggregate([
       { $match: { user: req.user.id } },
       {
@@ -101,7 +102,7 @@ export const getUserRequestsWithPagination = async (req: Request, res: Response)
         hasNextPage: page < Math.ceil(totalCount / limit),
         hasPrevPage: page > 1,
       },
-      stats: stats.reduce((acc: any, stat: any) => {
+      stats: stats.reduce((acc: RequestStats, stat: any) => {
         acc[stat._id] = {
           count: stat.count,
           totalSendAmount: stat.totalSendAmount,

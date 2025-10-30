@@ -11,26 +11,22 @@ export const changeEmail = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'New email and confirmation code are required!' });
     }
 
-    // Проверяем код подтверждения
     const storedCode = await ConfirmationCode.findOne({ email: newEmail });
     if (!storedCode || storedCode.code !== code) {
       return res.status(400).json({ error: 'Invalid confirmation code!' });
     }
 
-    // Проверяем, что новый email не занят другим пользователем
     const existingUser = await User.findOne({ email: newEmail });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists!' });
     }
 
-    // Обновляем email пользователя
     const updatedUser = await User.findOneAndUpdate(
       { email: currentUserEmail },
       { email: newEmail },
       { new: true },
     ).select('email fullName -_id');
 
-    // Удаляем использованный код подтверждения
     await ConfirmationCode.deleteOne({ email: newEmail });
 
     res.status(200).json(updatedUser);

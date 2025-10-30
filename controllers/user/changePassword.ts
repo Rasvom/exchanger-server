@@ -15,22 +15,17 @@ export const changePassword = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Password must be at least 5 characters long!' });
     }
 
-    // Находим пользователя
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ error: 'User not found!' });
     }
 
-    // Проверяем старый пароль
     const isOldPasswordCorrect = await compare(oldPassword, user.password);
     if (!isOldPasswordCorrect) {
       return res.status(400).json({ error: 'Incorrect old password!' });
     }
 
-    // Хешируем новый пароль
     const hashNewPassword = await hash(newPassword, Number(process.env.BCRYPT_ROUNDS));
-
-    // Обновляем пароль
     await User.findOneAndUpdate({ email: userEmail }, { password: hashNewPassword }, { new: true });
 
     res.status(200).json({});

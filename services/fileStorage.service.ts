@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const s3Client = new S3Client({
-  endpoint: 'https://storage.yandexcloud.net', // URL Yandex Object Storage
+  endpoint: 'https://storage.yandexcloud.net',
   region: 'ru-central1',
   credentials: {
     accessKeyId: process.env.YANDEX_ACCESS_KEY || '',
@@ -9,20 +9,15 @@ const s3Client = new S3Client({
   },
 });
 
-export const uploadFileToYandex = async (
-  buffer: Buffer,
-  fileName: string,
-  mimeType: string,
-): Promise<string> => {
+export const uploadFile = async (file: Express.Multer.File, fileName: string) => {
   const command = new PutObjectCommand({
-    Bucket: process.env.YANDEX_BUCKET_NAME || '',
+    Bucket: process.env.YANDEX_BUCKET_NAME,
     Key: fileName,
-    Body: buffer,
-    ContentType: mimeType,
+    Body: file.buffer,
+    ContentType: file.mimetype,
   });
 
   await s3Client.send(command);
 
-  // Возвращаем URL загруженного файла
   return `https://${process.env.YANDEX_BUCKET_NAME}.storage.yandexcloud.net/${fileName}`;
 };

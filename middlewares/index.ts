@@ -1,11 +1,27 @@
 import { Express, json, urlencoded } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import logger from '@config/logger';
+import { apiLimiter } from './rateLimiter.middleware';
 
 export const configureMiddleware = (app: Express): void => {
+  app.use(helmet());
+  app.use('/api/', apiLimiter);
+  
+  const morganFormat = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
+  app.use(
+    morgan(morganFormat, {
+      stream: {
+        write: (message: string) => logger.http(message.trim()),
+      },
+    }),
+  );
+
   app.use(
     cors({
-      origin: ['http://192.168.31.92:5173', 'http://localhost:5173'],
+      origin: ['http://192.168.31.92:5173', 'http://localhost:5173', 'http://localhost:5174'],
       credentials: true,
       exposedHeaders: ['X-Refresh-Tokens'],
     }),

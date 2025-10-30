@@ -8,9 +8,9 @@ import userMiddleware from '@middlewares/user.middleware';
 
 const router = Router();
 
-router.post('/create', userMiddleware, createRequest);
-router.get('/user', authMiddleware, getUserRequests);
-router.get('/user/paginated', authMiddleware, getUserRequestsWithPagination);
+router.post('/create', userMiddleware, createRequest as any);
+router.get('/user', authMiddleware, getUserRequests as any);
+router.get('/user/paginated', authMiddleware, getUserRequestsWithPagination as any);
 router.get('/:id', getRequest);
 
 export default router;

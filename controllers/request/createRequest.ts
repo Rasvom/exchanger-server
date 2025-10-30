@@ -33,7 +33,6 @@ export const createRequest = async (req: Request, res: Response) => {
         throw new Error('Отсутствуют обязательные поля');
       }
 
-      // Валидация email формата
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         throw new Error('Неверный формат email адреса');
@@ -62,17 +61,13 @@ export const createRequest = async (req: Request, res: Response) => {
         status,
       });
 
-      // Сохраняем заявку в рамках транзакции
       await newRequest.save({ session });
 
-      // Пытаемся отправить email - если не получается, транзакция откатится
       try {
         await sendRequestEmail(email, newRequest._id.toString());
       } catch (emailError) {
-        // Логируем ошибку email для отладки
         console.error('Email sending failed:', emailError);
 
-        // Выбрасываем ошибку чтобы откатить транзакцию
         if (emailError && typeof emailError === 'object' && 'responseCode' in emailError) {
           const mailError = emailError as any;
           if (mailError.responseCode === 550) {
@@ -86,7 +81,6 @@ export const createRequest = async (req: Request, res: Response) => {
         );
       }
 
-      // Возвращаем созданную заявку
       res.status(201).json(newRequest);
     });
   } catch (error) {

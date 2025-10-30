@@ -1,18 +1,16 @@
 import axios from 'axios';
 import { CRYPTO_API_URL } from '@config/crypto';
-import Crypto from '@models/TradeAsset.model'; // Подключаем модель Crypto
+import Crypto from '@models/TradeAsset.model';
 
 type CoinGeckoResponse = Record<string, Record<string, number>>;
 
 let cachedPrices: Record<string, number> = {};
 
-// Функция для получения актуальных данных о криптовалютах
 export const fetchCryptoPrices = async () => {
   try {
-    // Получаем список активных криптовалют из базы данных
     const activeCryptos = await Crypto.find({
       active: true,
-      symbol: { $ne: 'rub' }, // Исключить записи, где symbol равен 'rub'
+      symbol: { $ne: 'rub' },
     })
       .select('symbol -_id')
       .lean();
@@ -24,18 +22,16 @@ export const fetchCryptoPrices = async () => {
       return;
     }
 
-    // Отправляем запрос в CoinGecko API
     const response = await axios.get<CoinGeckoResponse>(CRYPTO_API_URL, {
       params: {
-        ids, // Список криптовалют
-        vs_currencies: 'rub', // Валюты для конвертации
+        ids,
+        vs_currencies: 'rub',
       },
     });
 
-    // Обновляем кэш
     cachedPrices = Object.entries(response.data).reduce(
       (acc, [key, value]) => {
-        acc[key] = parseFloat(value['rub'].toFixed(2)); // Сохраняем цену в рублях с двумя знаками
+        acc[key] = parseFloat(value['rub'].toFixed(2));
         return acc;
       },
       {} as Record<string, number>,
@@ -47,5 +43,4 @@ export const fetchCryptoPrices = async () => {
   }
 };
 
-// Функция для получения кэшированных данных
 export const getCachedPrices = () => cachedPrices;
