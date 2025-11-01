@@ -19,9 +19,11 @@ export const configureMiddleware = (app: Express): void => {
     }),
   );
 
+  const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [];
+  
   app.use(
     cors({
-      origin: ['https://exchanger-htxb-ovnp0kclr-lexs-projects-313f40a2.vercel.app'],
+      origin: allowedOrigins,
       credentials: true,
       exposedHeaders: ['X-Refresh-Tokens'],
     }),
