@@ -21,7 +21,7 @@ export const configureMiddleware = (app: Express): void => {
 
   app.use(
     cors({
-      origin: ['http://192.168.31.92:5173', 'http://localhost:5173', 'http://localhost:5174'],
+      origin: ['https://exchanger-htxb-ovnp0kclr-lexs-projects-313f40a2.vercel.app/'],
       credentials: true,
       exposedHeaders: ['X-Refresh-Tokens'],
     }),
