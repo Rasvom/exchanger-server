@@ -1,15 +1,18 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 import Manager from '@models/Manager.model';
+import { AuthenticatedRequest } from '../types';
 
 interface JwtPayload {
   id: string;
   login: string;
   role: string;
+  iat: number;
+  exp: number;
 }
 
 export const verifyManagerToken = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -42,7 +45,6 @@ export const verifyManagerToken = async (
     }
 
     // Add manager information to request object
-    // @ts-ignore
     req.manager = {
       id: decodedToken.id,
       login: decodedToken.login
