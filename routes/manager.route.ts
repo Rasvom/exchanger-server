@@ -4,7 +4,7 @@ import { verifyManagerToken } from '@middlewares/managerAuth.middleware';
 
 const router = Router();
 
-// Auth routes
+
 router.post('/login', managerControllers.login);
 router.post('/refresh', managerControllers.refreshTokens);
 

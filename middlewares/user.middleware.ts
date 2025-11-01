@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verify, JwtPayload } from 'jsonwebtoken';
 
-// Расширяем интерфейс Request, добавляя user
 declare module 'express-serve-static-core' {
   interface Request {
     user?: JwtPayload;

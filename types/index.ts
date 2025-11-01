@@ -1,16 +1,17 @@
 import { Request } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 
-export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-  } & JwtPayload;
-  manager?: {
-    id: string;
-    login: string;
-  } & JwtPayload;
+// Extend the Express Request type to include our custom manager property
+declare module 'express-serve-static-core' {
+  interface Request {
+    manager?: {
+      id: string;
+      login: string;
+    };
+  }
 }
+
+export interface AuthenticatedRequest extends Request {}
 
 // Query filter types
 export interface PaginationQuery {

@@ -44,7 +44,6 @@ export const verifyManagerToken = async (
       return res.status(401).json({ error: 'Manager not found' });
     }
 
-    // Add manager information to request object
     req.manager = {
       id: decodedToken.id,
       login: decodedToken.login
