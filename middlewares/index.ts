@@ -21,7 +21,7 @@ export const configureMiddleware = (app: Express): void => {
 
   app.use(
     cors({
-      origin: ['https://exchanger-htxb-ovnp0kclr-lexs-projects-313f40a2.vercel.app/'],
+      origin: ['https://exchanger-htxb-ovnp0kclr-lexs-projects-313f40a2.vercel.app'],
       credentials: true,
       exposedHeaders: ['X-Refresh-Tokens'],
     }),
